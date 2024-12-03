@@ -1,3 +1,4 @@
+#include <algorithm>
 #include <cmath>
 #include <cstdlib>
 #include <fstream>
@@ -14,11 +15,14 @@ struct Item {
   // TODO int reorderLevel;
 };
 // TODO void welcomeScreen(void);
+
+void readInventory(struct Item *items, int size, int properties);
 bool isValidCardNumber(long int n);
 
 int main() {
 
   Item items[7];
+  readInventory(items, 7, 4);
   //  welcomeScreen();
 
   long int cardNumber;
@@ -68,13 +72,26 @@ void welcomeScreen(void) {
   std::cout << std::internal << "A Retail Inventory Management System";
 }
 
-void readInventory(Item *items[], int size, int properties) {
+void readInventory(struct Item *items[], int size, int properties) {
   std::string item;
   std::ifstream inventoryDatabase("database.csv");
   while (std::getline(inventoryDatabase, item)) {
     int length = item.length();
     for (int i = 0; i < size; i++) {
       for (int j = 0; j < length; j++) {
+        do {
+          items[i]->name += item[j];
+        } while (item[j] != ',');
+
+        do {
+          items[i]->ID += item[j];
+        } while (item[j] != ',');
+
+        do {
+          items[i]->quantity += item[j];
+        } while (item[j] != ',');
+
+        items[i]->price += item[j];
       }
     }
   }
