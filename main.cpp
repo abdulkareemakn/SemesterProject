@@ -16,13 +16,14 @@ struct Item {
   // TODO int reorderLevel;
 };
 // TODO void welcomeScreen(void);
+void readInventory(std::array<Item, 7> &items, int properties);
 
-void readInventory(struct Item *items, int size, int properties);
 bool isValidCardNumber(long int n);
 
 int main() {
 
   std::array<Item, 7> items;
+  readInventory(items, 4);
 
   //  welcomeScreen();
 
@@ -75,27 +76,31 @@ void welcomeScreen(void) {
 
 void readInventory(std::array<Item, 7> &items, int properties) {
   int itemsCount = items.size();
+
   std::string item;
-
   std::ifstream inventoryDatabase("database.csv");
-  if (inventoryDatabase.is_open()) {
 
-    while (std::getline(inventoryDatabase, item)) {
+  if (inventoryDatabase.is_open()) {
+    for (int i = 0; i < itemsCount; i++) {
+
+      std::getline(inventoryDatabase, item);
+
       int length = item.length();
       for (int j = 0; j < length; j++) {
+
         do {
-          items[0].name += item[j];
+          items[i].name += item[j];
         } while (item[j] != ',');
 
         do {
-          items[0].ID += item[j];
+          items[i].ID += item[j];
         } while (item[j] != ',');
 
         do {
-          items[0].quantity += item[j];
+          items[i].quantity += item[j];
         } while (item[j] != ',');
 
-        items[0].price += item[j];
+        items[i].price += item[j];
       }
     }
   }
