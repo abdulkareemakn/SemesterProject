@@ -1,4 +1,5 @@
 #include <algorithm>
+#include <array>
 #include <cmath>
 #include <cstdlib>
 #include <fstream>
@@ -21,8 +22,8 @@ bool isValidCardNumber(long int n);
 
 int main() {
 
-  Item items[7];
-  readInventory(items, 7, 4);
+  std::array<Item, 7> items;
+
   //  welcomeScreen();
 
   long int cardNumber;
@@ -72,27 +73,31 @@ void welcomeScreen(void) {
   std::cout << std::internal << "A Retail Inventory Management System";
 }
 
-void readInventory(struct Item *items, int size, int properties) {
+void readInventory(std::array<Item, 7> &items, int properties) {
+  int itemsCount = items.size();
   std::string item;
+
   std::ifstream inventoryDatabase("database.csv");
-  while (std::getline(inventoryDatabase, item)) {
-    int length = item.length();
-    for (int i = 0; i < size; i++) {
+  if (inventoryDatabase.is_open()) {
+
+    while (std::getline(inventoryDatabase, item)) {
+      int length = item.length();
       for (int j = 0; j < length; j++) {
         do {
-          items[i].name += item[j];
+          items[0].name += item[j];
         } while (item[j] != ',');
 
         do {
-          items[i].ID += item[j];
+          items[0].ID += item[j];
         } while (item[j] != ',');
 
         do {
-          items[i].quantity += item[j];
+          items[0].quantity += item[j];
         } while (item[j] != ',');
 
-        items[i].price += item[j];
+        items[0].price += item[j];
       }
     }
   }
+  inventoryDatabase.close();
 }
