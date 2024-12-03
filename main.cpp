@@ -72,7 +72,7 @@ void welcomeScreen(void) {
   std::cout << std::internal << "A Retail Inventory Management System";
 }
 
-void readInventory(struct Item *items[], int size, int properties) {
+void readInventory(struct Item *items, int size, int properties) {
   std::string item;
   std::ifstream inventoryDatabase("database.csv");
   while (std::getline(inventoryDatabase, item)) {
@@ -80,18 +80,18 @@ void readInventory(struct Item *items[], int size, int properties) {
     for (int i = 0; i < size; i++) {
       for (int j = 0; j < length; j++) {
         do {
-          items[i]->name += item[j];
+          items[i].name += item[j];
         } while (item[j] != ',');
 
         do {
-          items[i]->ID += item[j];
+          items[i].ID += item[j];
         } while (item[j] != ',');
 
         do {
-          items[i]->quantity += item[j];
+          items[i].quantity += item[j];
         } while (item[j] != ',');
 
-        items[i]->price += item[j];
+        items[i].price += item[j];
       }
     }
   }
