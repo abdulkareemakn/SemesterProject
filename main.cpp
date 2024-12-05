@@ -17,20 +17,21 @@ struct Item {
 // TODO void welcomeScreen(void);
 
 void authentication(void);
-void readInventory(Item items[], int size, int properties);
+void readInventory(Item items[], int size);
 void displayInventory(Item items[], int size);
+void writeInventory(Item items[], int size);
 void sellItem(Item items[], int size);
 
 bool isValidCardNumber(long int n);
 
 int main() {
 
-  int properties = 4;
   int size = 7;
   Item items[7];
-  readInventory(items, size, properties);
+  readInventory(items, size);
   displayInventory(items, size);
-  //  sellItem(items, size);
+  sellItem(items, size);
+  writeInventory(items, size);
 
   //  welcomeScreen();
 }
@@ -74,7 +75,7 @@ void welcomeScreen(void) {
   std::cout << std::internal << "A Retail Inventory Management System";
 }
 
-void readInventory(Item items[], int size, int properties) {
+void readInventory(Item items[], int size) {
 
   std::string item;
   std::ifstream inventoryDatabase("database.csv");
@@ -104,13 +105,30 @@ void readInventory(Item items[], int size, int properties) {
 
 void displayInventory(Item items[], int size) {
   std::cout << std::left << std::setw(10)
-            << "Name\t\t|  ID\t\t|  Quantity\t\t|  Price\t\t";
+            << "Name\t\t|  ID\t\t|  Quantity\t|  Price\t\n\n";
 
   for (int i = 0; i < size; i++) {
     std::cout << std::left << std::setw(10) << items[i].name << "\t|  "
-              << items[i].ID << "\t  " << items[i].quantity << "\t|  $"
+              << items[i].ID << "\t|  " << items[i].quantity << "\t\t|  $"
               << items[i].price << "\n";
   }
+
+  std::cout << "\n\n";
+}
+
+void writeInventory(Item items[], int size) {
+  std::ofstream inventoryDatabase("database.csv");
+
+  for (int i = 0; i < size; i++) {
+    inventoryDatabase << items[i].name << "," << items[i].ID << ","
+                      << items[i].quantity << "," << items[i].price;
+
+    if (i != size - 1) {
+      inventoryDatabase << "\n";
+    }
+  }
+
+  inventoryDatabase.close();
 }
 
 void authentication(void) {}
