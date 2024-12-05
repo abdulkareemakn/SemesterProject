@@ -115,6 +115,7 @@ void sellItem(Item items[], int size) {
     std::cout << std::left << std::setw(10) << items[i].name << "\t|  "
               << items[i].ID << "\t|  $" << items[i].price << "\n";
   }
+
   std::cout << "\nWhich item do you want to sell? \n";
   std::cout << "Item ID: ";
   std::getline(std::cin, id);
@@ -126,44 +127,45 @@ void sellItem(Item items[], int size) {
       std::cout << "Quantity to sell: ";
       std::cin >> quantity;
       if (quantity > items[i].quantity) {
-        std::cout << "Invalid. More than stock available";
+        std::cout << "\nInvalid. More than stock available";
         return;
       }
 
       bill = items[i].quantity * items[i].price;
-      std::cout << "Total Bill: " << bill << "\n";
+      std::cout << "\nTotal Bill: $" << bill << "\n";
 
-      std::cout << "Payment Method? Cash or Credit?";
+      std::cout << "\nChoose the desired payment method\n";
       std::cout << "0. Cash\n";
       std::cout << "1. Credit\n";
+      std::cout << "Payment Method: ";
+      std::cin >> paymentMethod;
 
       if (paymentMethod) {
         long int cardNumber;
 
-        std::cout << "Card Number: ";
+        std::cout << "\nCard Number: ";
         std::cin >> cardNumber;
 
         if (!isValidCardNumber(cardNumber)) {
-          std::cout << "Invalid Card Number. Transaction failed!";
+          std::cout << "Invalid Card Number. Transaction failed!\n";
           return;
         }
       } else {
-        std::cout << "Cash Amount: ";
+        std::cout << "\nCash Amount: ";
         std::cin >> cash;
         if (cash < bill) {
-          std::cout << "Insufficient Cash";
+          std::cout << "Insufficient Cash\n";
           return;
         }
-        std::cout << "Change owed: $" << cash - bill << "\n";
+        std::cout << "\nChange owed: $" << cash - bill << "\n";
       }
 
       items[i].quantity -= quantity;
-      std::cout << "Transaction success";
+      std::cout << "\nTransaction success\n";
       break;
 
     } else {
-      std::cout << "Invalid ID";
-      return;
+      continue;
     }
   }
 }
