@@ -81,27 +81,18 @@ void readInventory(std::array<Item, 7> &items, int properties) {
   std::ifstream inventoryDatabase("database.csv");
 
   if (inventoryDatabase.is_open()) {
-    for (int i = 0; i < itemsCount; i++) {
 
-      std::getline(inventoryDatabase, item);
+    int lineCount = 0;
+    while (std::getline(inventoryDatabase, item, ',')) {
 
       int length = item.length();
       for (int j = 0; j < length; j++) {
 
         do {
-          items[i].name += item[j];
+          items[lineCount].name += item[j];
         } while (item[j] != ',');
-
-        do {
-          items[i].ID += item[j];
-        } while (item[j] != ',');
-
-        do {
-          items[i].quantity += item[j];
-        } while (item[j] != ',');
-
-        items[i].price += item[j];
       }
+      lineCount++;
     }
   }
   inventoryDatabase.close();
