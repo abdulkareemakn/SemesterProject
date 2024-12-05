@@ -31,8 +31,6 @@ int main() {
   sellItem(items, size);
 
   //  welcomeScreen();
-
-  std::cout << isValidCardNumber(cardNumber) << std::endl;
 }
 
 bool isValidCardNumber(long int n) {
@@ -108,6 +106,8 @@ void sellItem(Item items[], int size) {
   std::string id;
   int quantity;
   bool paymentMethod;
+  float cash;
+  int bill;
 
   std::cout << std::left << std::setw(10) << "Name\t\t|  ID\t\t|  Price\n\n";
 
@@ -130,6 +130,9 @@ void sellItem(Item items[], int size) {
         return;
       }
 
+      bill = items[i].quantity * items[i].price;
+      std::cout << "Total Bill: " << bill << "\n";
+
       std::cout << "Payment Method? Cash or Credit?";
       std::cout << "0. Cash\n";
       std::cout << "1. Credit\n";
@@ -140,19 +143,24 @@ void sellItem(Item items[], int size) {
         std::cout << "Card Number: ";
         std::cin >> cardNumber;
 
-        if (isValidCardNumber(cardNumber)) {
-          std::cout << "Transaction Success!";
-        } else {
+        if (!isValidCardNumber(cardNumber)) {
           std::cout << "Invalid Card Number. Transaction failed!";
           return;
         }
       } else {
         std::cout << "Cash Amount: ";
+        std::cin >> cash;
+        if (cash < bill) {
+          std::cout << "Insufficient Cash";
+          return;
+        }
+        std::cout << "Change owed: $" << cash - bill << "\n";
       }
 
       items[i].quantity -= quantity;
       std::cout << "Transaction success";
       break;
+
     } else {
       std::cout << "Invalid ID";
       return;
