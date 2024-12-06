@@ -1,4 +1,5 @@
 #include <cmath>
+#include <cstdio>
 #include <cstdlib>
 #include <fstream>
 #include <iomanip>
@@ -14,9 +15,9 @@ struct Item {
   float price;
   // TODO int reorderLevel;
 };
-// TODO void welcomeScreen(void);
+void welcomeScreen(void);
 
-void authentication(void);
+bool authentication(void);
 void readInventory(Item items[], int size);
 void displayInventory(Item items[], int size);
 void writeInventory(Item items[], int size);
@@ -28,12 +29,18 @@ int main() {
 
   int size = 7;
   Item items[7];
-  readInventory(items, size);
-  displayInventory(items, size);
-  sellItem(items, size);
-  writeInventory(items, size);
 
-  //  welcomeScreen();
+  welcomeScreen();
+
+  if (authentication()) {
+
+    readInventory(items, size);
+    displayInventory(items, size);
+    //    sellItem(items, size);
+    //   writeInventory(items, size);
+
+  } else
+    std::cout << "Invalid Credentials" << std::endl;
 }
 
 bool isValidCardNumber(long int n) {
@@ -72,7 +79,17 @@ bool isValidCardNumber(long int n) {
 
 void welcomeScreen(void) {
 
-  std::cout << std::internal << "A Retail Inventory Management System";
+  std::cout << "\t\t\t\t\t\tA Retail Inventory Management System\n";
+  std::cout << "\n\n\n";
+  std::cout << "\t\t\t\t\t\t\t\tMade by";
+  std::cout << "\n\n\n";
+  std::cout << "\t\t\t\t\t\tAhmad Ali\t  |     FA24-BSE-012\n";
+  std::cout << "\t\t\t\t\t\tAbdul Kareem\t  |     FA24-BSE-123\n";
+  std::cout << "\t\t\t\t\t\tAhmad Faisal\t  |     FA24-BSE-123\n";
+  std::cout << "\n\n";
+  std::cout << "---------------------------------------------------------------"
+               "---------------------------------------------------------------"
+               "--------";
 }
 
 void readInventory(Item items[], int size) {
@@ -131,7 +148,30 @@ void writeInventory(Item items[], int size) {
   inventoryDatabase.close();
 }
 
-void authentication(void) {}
+bool authentication(void) {
+  std::string username = "admin";
+  std::string password = "password";
+
+  std::string input_username;
+  std::string input_password;
+
+  std::cout << "\n\n\n\t\t\t\t\t\t\t\tWelcome\n\n";
+  std::cout << "\t\t\t\t\t\t\t\t Login\n";
+  std::cout << "\n\n";
+
+  std::cout << "\tUsername: ";
+  std::getline(std::cin, input_username);
+
+  std::cout << "\tPassword: ";
+  std::getline(std::cin, input_password);
+
+  std::cout << "\n\n";
+
+  if (username == input_username && password == input_password)
+    return true;
+  else
+    return false;
+}
 
 void sellItem(Item items[], int size) {
   std::string id;
