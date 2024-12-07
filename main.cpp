@@ -22,6 +22,10 @@ void readInventory(Item items[], int size);
 void displayInventory(Item items[], int size);
 void writeInventory(Item items[], int size);
 void sellItem(Item items[], int size);
+void logReceipt(std::string name, std::string ID, int quantity, float bill,
+                int paymentMethod);
+void printReceipt(std::string name, int quantity, float price, float bill,
+                  int paymentMethod);
 
 bool isValidCardNumber(long int n);
 
@@ -39,9 +43,9 @@ int main() {
   if (authentication()) {
 
     readInventory(items, size);
-    displayInventory(items, size);
-    //    sellItem(items, size);
-    //   writeInventory(items, size);
+    // displayInventory(items, size);
+    sellItem(items, size);
+    //    writeInventory(items, size);
 
   } else
     std::cout << "Invalid Credentials" << std::endl;
@@ -180,9 +184,10 @@ bool authentication(void) {
 void sellItem(Item items[], int size) {
   std::string id;
   int quantity;
-  bool paymentMethod;
+  int paymentMethod;
   float cash;
-  int bill;
+  float bill;
+  float change;
 
   std::cout << std::left << std::setw(10) << "Name\t\t|  ID\t\t|  Price\n\n";
 
@@ -199,45 +204,62 @@ void sellItem(Item items[], int size) {
   for (int i = 0; i < size; i++) {
     if (id == items[i].ID) {
       std::cout << "\nItem available in stock: " << items[i].quantity << "\n";
+
       std::cout << "Quantity to sell: ";
       std::cin >> quantity;
+
       if (quantity > items[i].quantity) {
         std::cout << "\nInvalid. More than stock available";
         return;
       }
 
-      bill = items[i].quantity * items[i].price;
+      bill = quantity * items[i].price;
       std::cout << "\nTotal Bill: $" << bill << "\n";
 
-      std::cout << "\nChoose the desired payment method\n";
-      std::cout << "0. Cash\n";
-      std::cout << "1. Credit\n";
-      std::cout << "Payment Method: ";
-      std::cin >> paymentMethod;
+      for (int i = 1; i <= 3; i++) {
 
-      if (paymentMethod) {
-        long int cardNumber;
+        std::cout << "\nChoose the desired payment method\n";
+        std::cout << "1. Credit\n";
+        std::cout << "2. Cash\n";
+        std::cout << "Payment Method: ";
+        std::cin >> paymentMethod;
 
-        std::cout << "\nCard Number: ";
-        std::cin >> cardNumber;
+        if (paymentMethod == 1) {
+          long int cardNumber;
 
-        creditTransaction++;
+          std::cout << "\nCard Number: ";
+          std::cin >> cardNumber;
 
-        if (!isValidCardNumber(cardNumber)) {
-          std::cout << "Invalid Card Number. Transaction failed!\n";
-          return;
+          creditTransaction++;
+
+          if (!isValidCardNumber(cardNumber)) {
+            std::cout << "Invalid Card Number. Transaction failed!\n";
+            return;
+          }
+          break;
+        } else if (paymentMethod == 2) {
+          std::cout << "\nCash Amount: $";
+          std::cin >> cash;
+          if (cash < bill) {
+            std::cout << "Insufficient Cash\n";
+            return;
+          }
+          change = cash - bill;
+          std::cout << "\nChange owed: $" << change << "\n";
+
+          cashTransaction++;
+          break;
+        } else {
+          std::cout << "Invalid Payment method!";
+          if (i == 3)
+            return;
         }
-      } else {
-        std::cout << "\nCash Amount: ";
-        std::cin >> cash;
-        if (cash < bill) {
-          std::cout << "Insufficient Cash\n";
-          return;
-        }
-        std::cout << "\nChange owed: $" << cash - bill << "\n";
-
-        cashTransaction++;
       }
+
+      logReceipt(items[i].name, items[i].ID, quantity, bill, paymentMethod);
+
+      printReceipt(items[i].name, quantity, items[i].price, bill,
+                   paymentMethod);
 
       items[i].quantity -= quantity;
       std::cout << "\nTransaction success\n";
@@ -246,11 +268,61 @@ void sellItem(Item items[], int size) {
       break;
 
     } else {
-      if (i == size - 1)
+      if (i == size - 1) {
         std::cout << "Invalid Product ID";
-      return;
-
-      continue;
+        return;
+      }
     }
   }
+}
+
+void logReceipt(std::string name, std::string ID, int quantity, float bill,
+                int paymentMethod) {
+  std::ofstream receiptsDatabase("receipts.csv", std::ios::app);
+  std::cout << "\nTransaction Processing. Press any character to print "
+               "receipt.";
+  std::cin.ignore();
+  std::getchar();
+  std::cout << "\n\n";
+
+  receiptsDatabase << name << "," << ID << "," << quantity << "," << bill
+                   << "\n";
+
+  receiptsDatabase.close();
+}
+
+void printReceipt(std::string name, int quantity, float price, float bill,
+                  int paymentMethod) {
+
+  std::cout << "+========================================+\n";
+  std::cout << "|                 Receipt                |\n";
+  std::cout << "+========================================+\n";
+
+  std::cout << "\n";
+
+  std::cout << "------------------------------------------\n";
+  std::cout << "            Items Purchased               \n";
+  std::cout << "------------------------------------------\n";
+
+  std::cout << "\n";
+
+  std::cout << "| Item Name\t\t| Qty | Price    |\n";
+  std::cout << "------------------------------------------\n";
+  std::cout << std::left << std::setw(10) << name << "\t\t| " << std::right
+            << quantity << "  | $" << price << "   |" << "\n";
+
+  std::cout << "\n\n";
+
+  std::cout << "Total Amount: \t\t$" << bill;
+  std::cout << "\n\n\n";
+
+  if (paymentMethod == 1) {
+    std::cout << "Payment Method: \t" << "Credit";
+  } else {
+    std::cout << "Payment Method: \t" << "Cash";
+  }
+
+  std::cout << "\n\n";
+  std::cout << "-------------------------------------------\n";
+  std::cout << "Thank you for your purchase!\n";
 }
