@@ -25,6 +25,10 @@ void sellItem(Item items[], int size);
 
 bool isValidCardNumber(long int n);
 
+int transactionCount = 0;
+int cashTransaction = 0;
+int creditTransaction = 0;
+
 int main() {
 
   int size = 7;
@@ -95,7 +99,7 @@ void welcomeScreen(void) {
 void readInventory(Item items[], int size) {
 
   std::string item;
-  std::ifstream inventoryDatabase("database.csv");
+  std::ifstream inventoryDatabase("inventory.csv");
 
   if (inventoryDatabase.is_open()) {
 
@@ -134,7 +138,7 @@ void displayInventory(Item items[], int size) {
 }
 
 void writeInventory(Item items[], int size) {
-  std::ofstream inventoryDatabase("database.csv");
+  std::ofstream inventoryDatabase("inventory.csv");
 
   for (int i = 0; i < size; i++) {
     inventoryDatabase << items[i].name << "," << items[i].ID << ","
@@ -217,6 +221,8 @@ void sellItem(Item items[], int size) {
         std::cout << "\nCard Number: ";
         std::cin >> cardNumber;
 
+        creditTransaction++;
+
         if (!isValidCardNumber(cardNumber)) {
           std::cout << "Invalid Card Number. Transaction failed!\n";
           return;
@@ -229,13 +235,21 @@ void sellItem(Item items[], int size) {
           return;
         }
         std::cout << "\nChange owed: $" << cash - bill << "\n";
+
+        cashTransaction++;
       }
 
       items[i].quantity -= quantity;
       std::cout << "\nTransaction success\n";
+
+      transactionCount++;
       break;
 
     } else {
+      if (i == size - 1)
+        std::cout << "Invalid Product ID";
+      return;
+
       continue;
     }
   }
