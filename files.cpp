@@ -1,6 +1,6 @@
 #include <fstream>
 int main() {
-  std::ofstream database("database.csv");
+  std::ofstream database("inventory.csv");
 
   if (database.is_open()) {
     // grocery items
