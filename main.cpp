@@ -27,8 +27,6 @@ void sellItem(Item items[], int size);
 void logReceipt(float bill, int paymentMethod);
 void printReceipt(std::string name, int quantity, float price, float bill, int paymentMethod);
 
-
-
 */
 
 #include <fstream>
@@ -39,6 +37,11 @@ void printReceipt(std::string name, int quantity, float price, float bill, int p
 #include <sstream>
 #include <string>
 
+const int SIZE = 7;
+
+int transactionCount = 0;
+
+// Struct declared to store information about items
 struct Item
 {
     std::string name;
@@ -48,32 +51,40 @@ struct Item
     // TODO int reorderLevel;
 };
 
+// Function Prototypes
 void welcomeScreen(void);
+
 bool authentication(void);
+
+void createInventory(void);
 void readInventory(Item items[], int size);
 void displayInventory(Item items[], int size);
 void writeInventory(Item items[], int size);
 void restockInventory(Item items[], int size);
-void updatePrices(Item items[], int size);
+
 void sellItem(Item items[], int size);
+void updateItemPrices(Item items[], int size);
+
 void logReceipt(float bill, int paymentMethod);
 void printReceipt(std::string name, int quantity, float price, float bill, int paymentMethod);
-bool isValidCardNumber(long long int n);
+
 void progressReports(Item items[], int size);
 
-int transactionCount = 0;
+bool isValidCardNumber(long long int n);
 
-int main()
+int main(void)
 {
-    int size = 7;
-    Item items[7];
+    // An array of structs. The size of the array is according to the number of items in the database.
+    Item items[SIZE];
+
     int choice = 0;
 
     welcomeScreen();
 
     if (authentication())
     {
-        readInventory(items, size);
+        // createInventory();
+        readInventory(items, SIZE);
 
         while (true)
         {
@@ -90,34 +101,34 @@ int main()
 
             if (choice == 1)
             {
-                displayInventory(items, size);
+                displayInventory(items, SIZE);
             }
             else if (choice == 2)
             {
-                sellItem(items, size);
+                sellItem(items, SIZE);
             }
             else if (choice == 3)
             {
-                restockInventory(items, size);
+                restockInventory(items, SIZE);
             }
             else if (choice == 4)
             {
-                updatePrices(items, size);
+                updateItemPrices(items, SIZE);
             }
             else if (choice == 5)
             {
-                progressReports(items, size);
+                progressReports(items, SIZE);
             }
             else if (choice == 6)
             {
-                writeInventory(items, size);
+                writeInventory(items, SIZE);
                 return 0;
             }
             else
             {
                 std::cout << "Invalid choice!\n";
                 std::cout << "Saving and exiting!\n";
-                writeInventory(items, size);
+                writeInventory(items, SIZE);
                 return 0;
             }
         }
@@ -126,48 +137,8 @@ int main()
         std::cout << "Invalid Credentials!" << std::endl;
 }
 
-bool isValidCardNumber(long long int n)
-{
-    if (n < 0)
-        return false;
-
-    int digit;
-    int sum = 0;
-    bool runNextIteration = true;
-
-    while (n != 0)
-    {
-        if (runNextIteration)
-        {
-            digit = n % 10;
-
-            sum += digit;
-            n /= 10;
-
-            runNextIteration = false;
-        }
-        else
-        {
-            digit = n % 10;
-            digit *= 2;
-
-            if (digit > 9)
-                digit -= 9;
-
-            sum += digit;
-            n /= 10;
-
-            runNextIteration = true;
-        }
-    }
-
-    if (sum % 10 == 0)
-        return true;
-    else
-        return false;
-}
-
 void welcomeScreen(void)
+// This function displays the welcome screen of the program.
 {
     std::cout << "\t\t\t\t\t\tA Retail Inventory Management System\n";
     std::cout << "\n\n\n";
@@ -182,7 +153,53 @@ void welcomeScreen(void)
                  "--------";
 }
 
+bool authentication(void)
+// This function authenticates the user. The default username is "admin" and the default password is "password". The function returns true if the user is authenticated, otherwise it returns false.
+{
+    std::string username = "admin";
+    std::string password = "password";
+
+    std::string input_username;
+    std::string input_password;
+
+    std::cout << "\n\n\n\t\t\t\t\t\t\t\tWelcome\n\n";
+    std::cout << "\t\t\t\t\t\t\t\t Login\n";
+    std::cout << "\n\n";
+
+    std::cout << "\tUsername: ";
+    std::getline(std::cin, input_username);
+
+    std::cout << "\tPassword: ";
+    std::getline(std::cin, input_password);
+
+    std::cout << "\n\n";
+
+    if (username == input_username && password == input_password)
+        return true;
+    else
+        return false;
+}
+
+void createInventory(void){
+     std::ofstream database("inventory.csv");
+
+  if (database.is_open()) {
+    // grocery items
+    database << "Bananas,GR1001,150,0.50\n";
+    database << "Apples,GR1006,250,0.80\n";
+    database << "Strawberries,GR1015,110,3.80\n";
+
+    // dairy items
+    database << "Milk,DR1002,200,1.20\n";
+    database << "Eggs,DR1003,120,2.99\n";
+    database << "Salted Butter,DR1005,100,3.00\n";
+    database << "Yogurt,DR1009,90,2.20\n";
+  }
+  database.close();
+}
+
 void readInventory(Item items[], int size)
+// This function reads the inventory database from the file and stores the information in the array of structs. This function assumes that there is a database file named "inventory.csv" in the same directory as the program. To create the database file, uncomment line 86 to call the createInventory() function which will create the database file.
 {
     std::string item;
     std::ifstream inventoryDatabase("inventory.csv");
@@ -212,6 +229,7 @@ void readInventory(Item items[], int size)
 }
 
 void displayInventory(Item items[], int size)
+// This function displays the inventory on the console.
 {
     std::cout << std::left << std::setw(10) << "Name\t\t|  ID\t\t|  Quantity\t|  Price\t\n\n";
 
@@ -225,6 +243,7 @@ void displayInventory(Item items[], int size)
 }
 
 void writeInventory(Item items[], int size)
+// This function writes the inventory database to the file. The function writes the information from the array of structs to the file. 
 {
     std::ofstream inventoryDatabase("inventory.csv");
 
@@ -241,30 +260,34 @@ void writeInventory(Item items[], int size)
     inventoryDatabase.close();
 }
 
-bool authentication(void)
+void restockInventory(Item items[], int size)
+// This function allows the user to restock the inventory. The user is prompted to enter the item ID and the quantity to restock. The function then updates the quantity of the item in the inventory.
 {
-    std::string username = "admin";
-    std::string password = "password";
+    displayInventory(items, size);
+    std::string ID;
+    int quantity;
+    std::cout << "\n";
+    std::cout << "Specify the item ID for restocking: ";
+    std::cin.ignore();
+    std::getline(std::cin, ID);
+    for (int i = 0; i < size; i++)
+    {
+        if (ID == items[i].ID)
+        {
+            std::cout << "How many items do you want to restock? ";
+            std::cin >> quantity;
 
-    std::string input_username;
-    std::string input_password;
+            items[i].quantity += quantity;
 
-    std::cout << "\n\n\n\t\t\t\t\t\t\t\tWelcome\n\n";
-    std::cout << "\t\t\t\t\t\t\t\t Login\n";
-    std::cout << "\n\n";
-
-    std::cout << "\tUsername: ";
-    std::getline(std::cin, input_username);
-
-    std::cout << "\tPassword: ";
-    std::getline(std::cin, input_password);
-
-    std::cout << "\n\n";
-
-    if (username == input_username && password == input_password)
-        return true;
-    else
-        return false;
+            std::cout << "Stock updated successfully!\n\n";
+            break;
+        }
+        if (i == size - 1)
+        {
+            std::cout << "Invalid ID! Restock Failed!\n\n";
+            return;
+        }
+    }
 }
 
 void sellItem(Item items[], int size)
@@ -374,7 +397,42 @@ void sellItem(Item items[], int size)
     }
 }
 
+void updateItemPrices(Item items[], int size)
+// This function allows the user to update the prices of the items in the inventory. The user is prompted to enter the item ID and the new price. The function then updates the price of the item in the inventory.
+{
+    displayInventory(items, size);
+    std::string ID;
+    float price;
+
+    std::cout << "Specify the item ID for price update: ";
+    std::cin.ignore();
+    std::getline(std::cin, ID);
+
+    for (int i = 0; i < size; i++)
+    {
+        if (ID == items[i].ID)
+        {
+            std::cout << "What is the updated price? ";
+            std::cin >> price;
+
+            if (price <= 0)
+            {
+                std::cout << "Invalid Amount! Price update failed!\n\n";
+            }
+            items[i].price = price;
+            std::cout << "Price has been updated successfully!\n\n";
+            break;
+        }
+        if (i == size - 1)
+        {
+            std::cout << "Invalid ID! Price update failed!\n\n";
+            return;
+        }
+    }
+}
+
 void logReceipt(float bill, int paymentMethod)
+// This function logs the transaction details mainly the bill and the payment method to the receipts database file. This allows the program to keep track of the transactions made.
 {
     std::ofstream receiptsDatabase("receipts.csv", std::ios::app);
     receiptsDatabase << bill << "," << paymentMethod << "\n";
@@ -383,6 +441,7 @@ void logReceipt(float bill, int paymentMethod)
 }
 
 void printReceipt(std::string name, int quantity, float price, float bill, int paymentMethod)
+// This function prints the receipt of the transaction.
 {
     std::cout << "\nTransaction Processing. Press any character to print "
                  "receipt.";
@@ -426,69 +485,8 @@ void printReceipt(std::string name, int quantity, float price, float bill, int p
     std::cout << "Thank you for your purchase!\n\n";
 }
 
-void restockInventory(Item items[], int size)
-{
-    displayInventory(items, size);
-    std::string ID;
-    int quantity;
-    std::cout << "\n";
-    std::cout << "Specify the item ID for restocking: ";
-    std::cin.ignore();
-    std::getline(std::cin, ID);
-    for (int i = 0; i < size; i++)
-    {
-        if (ID == items[i].ID)
-        {
-            std::cout << "How many items do you want to restock? ";
-            std::cin >> quantity;
-
-            items[i].quantity += quantity;
-
-            std::cout << "Stock updated successfully!\n\n";
-            break;
-        }
-        if (i == size - 1)
-        {
-            std::cout << "Invalid ID! Restock Failed!\n\n";
-            return;
-        }
-    }
-}
-
-void updatePrices(Item items[], int size)
-{
-    displayInventory(items, size);
-    std::string ID;
-    float price;
-
-    std::cout << "Specify the item ID for price update: ";
-    std::cin.ignore();
-    std::getline(std::cin, ID);
-
-    for (int i = 0; i < size; i++)
-    {
-        if (ID == items[i].ID)
-        {
-            std::cout << "What is the updated price? ";
-            std::cin >> price;
-
-            if (price <= 0)
-            {
-                std::cout << "Invalid Amount! Price update failed!\n\n";
-            }
-            items[i].price = price;
-            std::cout << "Price has been updated successfully!\n\n";
-            break;
-        }
-        if (i == size - 1)
-        {
-            std::cout << "Invalid ID! Price update failed!\n\n";
-            return;
-        }
-    }
-}
-
 void progressReports(Item items[], int size)
+// This function displays the progress reports of the transactions made. The function displays the total number of transactions, the total revenue, and the number of transactions made with cash and credit.
 {
     std::string lines;
     float total = 0;
@@ -519,4 +517,46 @@ void progressReports(Item items[], int size)
     std::cout << "Transactions made with credit: " << credit << "\n";
 
     std::cout << "Total Revenue: $" << total << "\n\n";
+}
+
+bool isValidCardNumber(long long int n)
+// This function checks if the credit card number is valid. This is an implementation of the Luhn Algorithm. See more at https://en.wikipedia.org/wiki/Luhn_algorithm
+{
+    if (n < 0)
+        return false;
+
+    int digit;
+    int sum = 0;
+    bool runNextIteration = true;
+
+    while (n != 0)
+    {
+        if (runNextIteration)
+        {
+            digit = n % 10;
+
+            sum += digit;
+            n /= 10;
+
+            runNextIteration = false;
+        }
+        else
+        {
+            digit = n % 10;
+            digit *= 2;
+
+            if (digit > 9)
+                digit -= 9;
+
+            sum += digit;
+            n /= 10;
+
+            runNextIteration = true;
+        }
+    }
+
+    if (sum % 10 == 0)
+        return true;
+    else
+        return false;
 }
