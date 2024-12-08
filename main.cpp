@@ -12,8 +12,8 @@ Ahmad Faisal	|  FA24-BSE-126
 // Implemented by Ahmad Faisal
 void welcomeScreen(void);
 bool authentication(void);
-void progressReports(Item items[], int size);
-bool isValidCardNumber(long long int n);
+void logReceipt(float bill, int paymentMethod);
+void printReceipt(std::string name, int quantity, float price, float bill, int paymentMethod);
 
 // Implemented by Abdul Kareem
 void readInventory(Item items[], int size);
@@ -24,8 +24,8 @@ void displayInventory(Item items[], int size);
 // Implemented by Ahmad Ali
 void updatePrices(Item items[], int size);
 void sellItem(Item items[], int size);
-void logReceipt(float bill, int paymentMethod);
-void printReceipt(std::string name, int quantity, float price, float bill, int paymentMethod);
+bool isValidCardNumber(long long int n);
+void progressReports(Item items[], int size);
 
 */
 
@@ -128,6 +128,7 @@ int main(void)
                 std::cout << "Invalid choice!\n";
                 std::cout << "Saving and exiting!\n";
                 writeInventory(items, SIZE);
+
                 return 0;
             }
         }
@@ -154,7 +155,8 @@ void welcomeScreen(void)
 
 bool authentication(void)
 // This function authenticates the user. The default username is "admin" and the default password is "password". The
-// function returns true if the user is authenticated, otherwise it returns false.
+// password could be hashed to increase security but it was beyond the scope of the program. The function returns true
+// if the user is authenticated, otherwise it returns false.
 {
     std::string username = "admin";
     std::string password = "password";
@@ -171,7 +173,6 @@ bool authentication(void)
 
     std::cout << "\tPassword: ";
     std::getline(std::cin, input_password);
-
     std::cout << "\n\n";
 
     if (username == input_username && password == input_password)
@@ -215,7 +216,7 @@ void createInventory(void)
 void readInventory(Item items[], int size)
 // This function reads the inventory database from the file and stores the information in the array of structs. This
 // function assumes that there is a database file named "inventory.csv" in the same directory as the program. To create
-// the database file, uncomment line 86 to call the createInventory() function which will create the database file.
+// the database file, uncomment line 85 to call the createInventory() function which will create the database file.
 {
     std::string item;
     std::ifstream inventoryDatabase("inventory.csv");
@@ -287,10 +288,12 @@ void restockInventory(Item items[], int size)
     displayInventory(items, size);
     std::string ID;
     int quantity;
+
     std::cout << "\n";
     std::cout << "Specify the item ID for restocking: ";
     std::cin.ignore();
     std::getline(std::cin, ID);
+
     for (int i = 0; i < size; i++)
     {
         if (ID == items[i].ID)
@@ -372,7 +375,6 @@ void sellItem(Item items[], int size)
                         std::cout << "Invalid Card Number! Transaction failed!\n\n";
                         continue;
                     }
-
                     break;
                 }
                 else if (paymentMethod == 2)
@@ -517,6 +519,7 @@ void progressReports(Item items[], int size)
     int cash = 0;
     int credit = 0;
     std::string temp;
+
     std::ifstream receipts("receipts.csv");
     if (receipts.is_open())
     {
