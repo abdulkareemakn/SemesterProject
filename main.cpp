@@ -1,7 +1,7 @@
 /*
 
-                                          CSC103	| Programming Fundamentals
-                               Semester Project
+CSC103	| Programming Fundamentals
+Semester Project
 
 Name		|  Registration No
 
@@ -111,6 +111,9 @@ int main()
 
 bool isValidCardNumber(long long int n)
 {
+    if (n < 0)
+        return false;
+
     int digit;
     int sum = 0;
     bool runNextIteration = true;
@@ -306,7 +309,7 @@ void sellItem(Item items[], int size)
                     if (!isValidCardNumber(cardNumber))
                     {
                         std::cout << "Invalid Card Number! Transaction failed!\n\n";
-                        return;
+                        continue;
                     }
 
                     creditTransaction++;
@@ -319,7 +322,7 @@ void sellItem(Item items[], int size)
                     if (cash < bill)
                     {
                         std::cout << "Insufficient Cash! Tranaction failed!\n\n";
-                        return;
+                        continue;
                     }
                     change = cash - bill;
                     std::cout << "\nChange owed: $" << change << "\n";
@@ -430,7 +433,10 @@ void restockInventory(Item items[], int size)
             break;
         }
         if (i == size - 1)
+        {
             std::cout << "Invalid ID! Restock Failed!\n\n";
+            return;
+        }
     }
 }
 
@@ -460,7 +466,10 @@ void updatePrices(Item items[], int size)
             break;
         }
         if (i == size - 1)
+        {
             std::cout << "Invalid ID! Price update failed!\n\n";
+            return;
+        }
     }
 }
 
