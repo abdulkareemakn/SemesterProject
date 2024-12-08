@@ -1,3 +1,15 @@
+/*
+
+                                          CSC103	| Programming Fundamentals
+                               Semester Project
+
+Name		|  Registration No
+
+Ahmad Ali	|  FA24-BSE-012
+Abdul Kareem	|  FA24-BSE-123
+Ahmad Faisal	|  FA24-BSE-126
+
+ */
 #include <cmath>
 #include <cstdio>
 #include <cstdlib>
@@ -27,7 +39,7 @@ void updatePrices(Item items[], int size);
 void sellItem(Item items[], int size);
 void logReceipt(std::string name, std::string ID, int quantity, float bill, int paymentMethod);
 void printReceipt(std::string name, int quantity, float price, float bill, int paymentMethod);
-bool isValidCardNumber(long int n);
+bool isValidCardNumber(long long int n);
 void progressReports(Item items[], int size);
 
 int transactionCount = 0;
@@ -97,7 +109,7 @@ int main()
         std::cout << "Invalid Credentials!" << std::endl;
 }
 
-bool isValidCardNumber(long int n)
+bool isValidCardNumber(long long int n)
 {
     int digit;
     int sum = 0;
@@ -286,18 +298,18 @@ void sellItem(Item items[], int size)
 
                 if (paymentMethod == 1)
                 {
-                    long int cardNumber;
+                    long long int cardNumber;
 
                     std::cout << "\nCard Number: ";
                     std::cin >> cardNumber;
-
-                    creditTransaction++;
 
                     if (!isValidCardNumber(cardNumber))
                     {
                         std::cout << "Invalid Card Number! Transaction failed!\n\n";
                         return;
                     }
+
+                    creditTransaction++;
                     break;
                 }
                 else if (paymentMethod == 2)
@@ -347,12 +359,6 @@ void sellItem(Item items[], int size)
 void logReceipt(std::string name, std::string ID, int quantity, float bill, int paymentMethod)
 {
     std::ofstream receiptsDatabase("receipts.csv", std::ios::app);
-    std::cout << "\nTransaction Processing. Press any character to print "
-                 "receipt.";
-    std::cin.ignore();
-    std::getchar();
-    std::cout << "\n\n";
-
     receiptsDatabase << name << "," << ID << "," << quantity << "," << bill << "\n";
 
     receiptsDatabase.close();
@@ -360,6 +366,12 @@ void logReceipt(std::string name, std::string ID, int quantity, float bill, int 
 
 void printReceipt(std::string name, int quantity, float price, float bill, int paymentMethod)
 {
+    std::cout << "\nTransaction Processing. Press any character to print "
+                 "receipt.";
+    std::cin.ignore();
+    std::getchar();
+    std::cout << "\n\n";
+
     std::cout << "+========================================+\n";
     std::cout << "|                 Receipt                |\n";
     std::cout << "+========================================+\n";
