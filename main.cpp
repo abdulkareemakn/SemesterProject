@@ -9,14 +9,33 @@ Ahmad Ali	|  FA24-BSE-012
 Abdul Kareem	|  FA24-BSE-123
 Ahmad Faisal	|  FA24-BSE-126
 
- */
-#include <cmath>
-#include <cstdio>
-#include <cstdlib>
+// Implemented by Ahmad Faisal
+void welcomeScreen(void);
+bool authentication(void);
+void progressReports(Item items[], int size);
+bool isValidCardNumber(long long int n);
+
+// Implemented by Abdul Kareem
+void readInventory(Item items[], int size);
+void writeInventory(Item items[], int size);
+void restockInventory(Item items[], int size);
+void displayInventory(Item items[], int size);
+
+// Implemented by Ahmad Ali
+void updatePrices(Item items[], int size);
+void sellItem(Item items[], int size);
+void logReceipt(float bill, int paymentMethod);
+void printReceipt(std::string name, int quantity, float price, float bill, int paymentMethod);
+
+
+
+*/
+
 #include <fstream>
 #include <iomanip>
 #include <ios>
 #include <iostream>
+#include <ostream>
 #include <sstream>
 #include <string>
 
@@ -37,14 +56,12 @@ void writeInventory(Item items[], int size);
 void restockInventory(Item items[], int size);
 void updatePrices(Item items[], int size);
 void sellItem(Item items[], int size);
-void logReceipt(std::string name, std::string ID, int quantity, float bill, int paymentMethod);
+void logReceipt(float bill, int paymentMethod);
 void printReceipt(std::string name, int quantity, float price, float bill, int paymentMethod);
 bool isValidCardNumber(long long int n);
 void progressReports(Item items[], int size);
 
 int transactionCount = 0;
-int cashTransaction = 0;
-int creditTransaction = 0;
 
 int main()
 {
@@ -312,7 +329,6 @@ void sellItem(Item items[], int size)
                         continue;
                     }
 
-                    creditTransaction++;
                     break;
                 }
                 else if (paymentMethod == 2)
@@ -327,7 +343,6 @@ void sellItem(Item items[], int size)
                     change = cash - bill;
                     std::cout << "\nChange owed: $" << change << "\n";
 
-                    cashTransaction++;
                     break;
                 }
                 else
@@ -338,7 +353,7 @@ void sellItem(Item items[], int size)
                 }
             }
 
-            logReceipt(items[i].name, items[i].ID, quantity, bill, paymentMethod);
+            logReceipt(bill, paymentMethod);
 
             printReceipt(items[i].name, quantity, items[i].price, bill, paymentMethod);
 
@@ -359,10 +374,10 @@ void sellItem(Item items[], int size)
     }
 }
 
-void logReceipt(std::string name, std::string ID, int quantity, float bill, int paymentMethod)
+void logReceipt(float bill, int paymentMethod)
 {
     std::ofstream receiptsDatabase("receipts.csv", std::ios::app);
-    receiptsDatabase << name << "," << ID << "," << quantity << "," << bill << "\n";
+    receiptsDatabase << bill << "," << paymentMethod << "\n";
 
     receiptsDatabase.close();
 }
@@ -475,8 +490,33 @@ void updatePrices(Item items[], int size)
 
 void progressReports(Item items[], int size)
 {
+    std::string lines;
+    float total = 0;
+    int cash = 0;
+    int credit = 0;
+    std::string temp;
+    std::ifstream receipts("receipts.csv");
+    if (receipts.is_open())
+    {
+        while (std::getline(receipts, lines))
+        {
+            std::istringstream line(lines);
+
+            std::getline(line, temp, ',');
+            total += std::stof(temp);
+
+            std::getline(line, temp, ',');
+            if (temp == "1")
+                credit++;
+            if (temp == "2")
+                cash++;
+        }
+    }
     std::cout << "\nTotal Transactions: " << transactionCount << "\n";
-    std::cout << "Transactions made with Cash: " << cashTransaction << "\n";
-    std::cout << "Transactions made with Credit: " << creditTransaction << "\n";
     std::cout << "\n";
+
+    std::cout << "Transactions made with cash: " << cash << "\n";
+    std::cout << "Transactions made with credit: " << credit << "\n";
+
+    std::cout << "Total Revenue: $" << total << "\n\n";
 }
