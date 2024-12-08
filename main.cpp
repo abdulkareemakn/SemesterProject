@@ -37,7 +37,7 @@ void printReceipt(std::string name, int quantity, float price, float bill, int p
 #include <sstream>
 #include <string>
 
-const int SIZE = 7;
+const int SIZE = 17;
 
 int transactionCount = 0;
 
@@ -48,7 +48,6 @@ struct Item
     std::string ID;
     int quantity;
     float price;
-    // TODO int reorderLevel;
 };
 
 // Function Prototypes
@@ -154,7 +153,8 @@ void welcomeScreen(void)
 }
 
 bool authentication(void)
-// This function authenticates the user. The default username is "admin" and the default password is "password". The function returns true if the user is authenticated, otherwise it returns false.
+// This function authenticates the user. The default username is "admin" and the default password is "password". The
+// function returns true if the user is authenticated, otherwise it returns false.
 {
     std::string username = "admin";
     std::string password = "password";
@@ -180,26 +180,42 @@ bool authentication(void)
         return false;
 }
 
-void createInventory(void){
-     std::ofstream database("inventory.csv");
+void createInventory(void)
+{
+    std::ofstream database("inventory.csv");
 
-  if (database.is_open()) {
-    // grocery items
-    database << "Bananas,GR1001,150,0.50\n";
-    database << "Apples,GR1006,250,0.80\n";
-    database << "Strawberries,GR1015,110,3.80\n";
+    if (database.is_open())
+    {
+        // Fruits
+        database << "Apples,GR1006,250,0.8\n";
+        database << "Strawberries,GR1015,110,3.8\n";
+        database << "Grapes (1kg),GR1021,90,2.99\n";
+        database << "Pineapple (each),GR1023,60,4.5\n";
+        database << "Watermelon (each),GR1024,50,6\n";
 
-    // dairy items
-    database << "Milk,DR1002,200,1.20\n";
-    database << "Eggs,DR1003,120,2.99\n";
-    database << "Salted Butter,DR1005,100,3.00\n";
-    database << "Yogurt,DR1009,90,2.20\n";
-  }
-  database.close();
+        // Dairy
+        database << "Milk,DR1002,200,1.20\n";
+        database << "Eggs,DR1003,120,2.99\n";
+        database << "Salted Butter,DR1005,100,3.00\n";
+        database << "Yogurt,DR1009,90,2.20\n";
+        database << "Cheddar Cheese (500g),DR1014,85,5\n";
+        database << "Fresh Cream (250ml),DR1026,150,2.5\n";
+        database << "Mozzarella Cheese (500g),DR1027,70,4.5\n";
+        database << "Chocolate Milk (1L),DR1028,80,2.2\n";
+
+        // Bakery
+        database << "Brown Bread (Loaf),BR1004,80,1.5\n";
+        database << "Croissant (each),BR1030,100,1.2\n";
+        database << "Bagel (each),BR1033,200,1\n";
+        database << "Chocolate Chip Cookies (6),BR1036,120,2.99\n";
+    }
+    database.close();
 }
 
 void readInventory(Item items[], int size)
-// This function reads the inventory database from the file and stores the information in the array of structs. This function assumes that there is a database file named "inventory.csv" in the same directory as the program. To create the database file, uncomment line 86 to call the createInventory() function which will create the database file.
+// This function reads the inventory database from the file and stores the information in the array of structs. This
+// function assumes that there is a database file named "inventory.csv" in the same directory as the program. To create
+// the database file, uncomment line 86 to call the createInventory() function which will create the database file.
 {
     std::string item;
     std::ifstream inventoryDatabase("inventory.csv");
@@ -231,19 +247,23 @@ void readInventory(Item items[], int size)
 void displayInventory(Item items[], int size)
 // This function displays the inventory on the console.
 {
-    std::cout << std::left << std::setw(10) << "Name\t\t|  ID\t\t|  Quantity\t|  Price\t\n\n";
+    std::cout << "\n";
+    std::cout << std::left << std::setw(30) << "Name" << "| " << std::setw(15) << "ID" << "| " << std::setw(10)
+              << "Quantity" << "| " << std::setw(10) << "Price\n\n";
 
     for (int i = 0; i < size; i++)
     {
-        std::cout << std::left << std::setw(10) << items[i].name << "\t|  " << items[i].ID << "\t|  "
-                  << items[i].quantity << "\t\t|  $" << items[i].price << "\n";
+        std::cout << std::left << std::setw(30) << items[i].name << "|  " << std::setw(15) << items[i].ID << "|  "
+                  << std::setw(10) << items[i].quantity << "|  " << std::setw(10) << std::fixed << std::setprecision(2)
+                  << items[i].price << "\n";
     }
 
     std::cout << "\n\n";
 }
 
 void writeInventory(Item items[], int size)
-// This function writes the inventory database to the file. The function writes the information from the array of structs to the file. 
+// This function writes the inventory database to the file. The function writes the information from the array of
+// structs to the file.
 {
     std::ofstream inventoryDatabase("inventory.csv");
 
@@ -261,7 +281,8 @@ void writeInventory(Item items[], int size)
 }
 
 void restockInventory(Item items[], int size)
-// This function allows the user to restock the inventory. The user is prompted to enter the item ID and the quantity to restock. The function then updates the quantity of the item in the inventory.
+// This function allows the user to restock the inventory. The user is prompted to enter the item ID and the quantity to
+// restock. The function then updates the quantity of the item in the inventory.
 {
     displayInventory(items, size);
     std::string ID;
@@ -398,7 +419,8 @@ void sellItem(Item items[], int size)
 }
 
 void updateItemPrices(Item items[], int size)
-// This function allows the user to update the prices of the items in the inventory. The user is prompted to enter the item ID and the new price. The function then updates the price of the item in the inventory.
+// This function allows the user to update the prices of the items in the inventory. The user is prompted to enter the
+// item ID and the new price. The function then updates the price of the item in the inventory.
 {
     displayInventory(items, size);
     std::string ID;
@@ -432,7 +454,8 @@ void updateItemPrices(Item items[], int size)
 }
 
 void logReceipt(float bill, int paymentMethod)
-// This function logs the transaction details mainly the bill and the payment method to the receipts database file. This allows the program to keep track of the transactions made.
+// This function logs the transaction details mainly the bill and the payment method to the receipts database file. This
+// allows the program to keep track of the transactions made.
 {
     std::ofstream receiptsDatabase("receipts.csv", std::ios::app);
     receiptsDatabase << bill << "," << paymentMethod << "\n";
@@ -486,7 +509,8 @@ void printReceipt(std::string name, int quantity, float price, float bill, int p
 }
 
 void progressReports(Item items[], int size)
-// This function displays the progress reports of the transactions made. The function displays the total number of transactions, the total revenue, and the number of transactions made with cash and credit.
+// This function displays the progress reports of the transactions made. The function displays the total number of
+// transactions, the total revenue, and the number of transactions made with cash and credit.
 {
     std::string lines;
     float total = 0;
@@ -520,7 +544,8 @@ void progressReports(Item items[], int size)
 }
 
 bool isValidCardNumber(long long int n)
-// This function checks if the credit card number is valid. This is an implementation of the Luhn Algorithm. See more at https://en.wikipedia.org/wiki/Luhn_algorithm
+// This function checks if the credit card number is valid. This is an implementation of the Luhn Algorithm. See more at
+// https://en.wikipedia.org/wiki/Luhn_algorithm
 {
     if (n < 0)
         return false;
