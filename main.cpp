@@ -16,6 +16,7 @@ struct Item
     float price;
     // TODO int reorderLevel;
 };
+
 void welcomeScreen(void);
 bool authentication(void);
 void readInventory(Item items[], int size);
@@ -93,7 +94,7 @@ int main()
         }
     }
     else
-        std::cout << "Invalid Credentials" << std::endl;
+        std::cout << "Invalid Credentials!" << std::endl;
 }
 
 bool isValidCardNumber(long int n)
@@ -251,7 +252,7 @@ void sellItem(Item items[], int size)
                   << "\n";
     }
 
-    std::cout << "\nWhich item do you want to sell? \n";
+    std::cout << "\nWhich item would you like to sell? \n";
     std::cout << "Item ID: ";
     std::cin.ignore();
     std::getline(std::cin, id);
@@ -261,23 +262,23 @@ void sellItem(Item items[], int size)
     {
         if (id == items[i].ID)
         {
-            std::cout << "\nItem available in stock: " << items[i].quantity << "\n";
+            std::cout << "\nStock on hand: " << items[i].quantity << "\n";
 
-            std::cout << "Quantity to sell: ";
+            std::cout << "Number of units to sell: ";
             std::cin >> quantity;
 
             if (quantity > items[i].quantity)
             {
-                std::cout << "\nInvalid! More than stock available\n\n";
+                std::cout << "\nInvalid! Not enough stock available to fulfill this request.\n\n";
                 return;
             }
 
             bill = quantity * items[i].price;
-            std::cout << "\nTotal Bill: $" << bill << "\n";
+            std::cout << "\nTotal Amount: $" << bill << "\n";
 
             for (int i = 1; i <= 3; i++)
             {
-                std::cout << "\nChoose the desired payment method\n";
+                std::cout << "\nSelect your preferred payment method.\n";
                 std::cout << "1. Credit\n";
                 std::cout << "2. Cash\n";
                 std::cout << "Payment Method: ";
@@ -316,7 +317,7 @@ void sellItem(Item items[], int size)
                 }
                 else
                 {
-                    std::cout << "Invalid Payment method! Transaction failed\n\n";
+                    std::cout << "Invalid Payment method! Transaction failed!\n\n";
                     if (i == 3)
                         return;
                 }
@@ -327,7 +328,7 @@ void sellItem(Item items[], int size)
             printReceipt(items[i].name, quantity, items[i].price, bill, paymentMethod);
 
             items[i].quantity -= quantity;
-            std::cout << "\nTransaction success\n\n";
+            std::cout << "\nTransaction successful!\n\n";
 
             transactionCount++;
             break;
@@ -336,7 +337,7 @@ void sellItem(Item items[], int size)
         {
             if (i == size - 1)
             {
-                std::cout << "Invalid Product ID. Transaction failed!\n\n";
+                std::cout << "Invalid Product ID! Transaction failed!\n\n";
                 return;
             }
         }
@@ -401,14 +402,14 @@ void restockInventory(Item items[], int size)
     std::string ID;
     int quantity;
     std::cout << "\n";
-    std::cout << "Which item do you want to restock? (ID): ";
+    std::cout << "Specify the item ID for restocking: ";
     std::cin.ignore();
     std::getline(std::cin, ID);
     for (int i = 0; i < size; i++)
     {
         if (ID == items[i].ID)
         {
-            std::cout << "Quantity to restock? ";
+            std::cout << "How many items do you want to restock? ";
             std::cin >> quantity;
 
             items[i].quantity += quantity;
@@ -417,7 +418,7 @@ void restockInventory(Item items[], int size)
             break;
         }
         if (i == size - 1)
-            std::cout << "Invalid ID! Failed!\n\n";
+            std::cout << "Invalid ID! Restock Failed!\n\n";
     }
 }
 
@@ -427,7 +428,7 @@ void updatePrices(Item items[], int size)
     std::string ID;
     float price;
 
-    std::cout << "Which item's price is to be updated? (ID): ";
+    std::cout << "Specify the item ID for price update: ";
     std::cin.ignore();
     std::getline(std::cin, ID);
 
@@ -435,19 +436,19 @@ void updatePrices(Item items[], int size)
     {
         if (ID == items[i].ID)
         {
-            std::cout << "What is the new price? ";
+            std::cout << "What is the updated price? ";
             std::cin >> price;
 
             if (price <= 0)
             {
-                std::cout << "Invalid Amount! Failed!\n\n";
+                std::cout << "Invalid Amount! Price update failed!\n\n";
             }
             items[i].price = price;
-            std::cout << "Price updated successfully!\n\n";
+            std::cout << "Price has been updated successfully!\n\n";
             break;
         }
         if (i == size - 1)
-            std::cout << "Invalid ID! Failed!\n\n";
+            std::cout << "Invalid ID! Price update failed!\n\n";
     }
 }
 
