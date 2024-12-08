@@ -21,6 +21,8 @@ bool authentication(void);
 void readInventory(Item items[], int size);
 void displayInventory(Item items[], int size);
 void writeInventory(Item items[], int size);
+void restockInventory(Item items[], int size);
+void updatePrices(Item items[], int size);
 void sellItem(Item items[], int size);
 void logReceipt(std::string name, std::string ID, int quantity, float bill,
                 int paymentMethod);
@@ -43,9 +45,9 @@ int main() {
   if (authentication()) {
 
     readInventory(items, size);
-    // displayInventory(items, size);
-    sellItem(items, size);
-    //    writeInventory(items, size);
+    displayInventory(items, size);
+    // sellItem(items, size);
+    //     writeInventory(items, size);
 
   } else
     std::cout << "Invalid Credentials" << std::endl;
@@ -325,4 +327,49 @@ void printReceipt(std::string name, int quantity, float price, float bill,
   std::cout << "\n\n";
   std::cout << "-------------------------------------------\n";
   std::cout << "Thank you for your purchase!\n";
+}
+
+void restockInventory(Item items[], int size) {
+  displayInventory(items, size);
+  std::string ID;
+  int quantity;
+  std::cout << "\n";
+  std::cout << "Which item do you want to restock? (ID)";
+  std::getline(std::cin, ID);
+  for (int i = 0; i < size; i++) {
+    if (ID == items[i].ID) {
+      std::cout << "Quantity to restock? ";
+      std::cin >> quantity;
+
+      items[i].quantity += quantity;
+
+      std::cout << "Stock updated successfully!\n";
+    }
+    if (i == size - 1)
+      std::cout << "Invalid ID!\n";
+  }
+}
+
+void updatePrices(Item items[], int size) {
+  displayInventory(items, size);
+  std::string ID;
+  float price;
+
+  std::cout << "Which item's price is to be updated? (ID)";
+  std::getline(std::cin, ID);
+
+  for (int i = 0; i < size; i++) {
+    if (ID == items[i].ID) {
+      std::cout << "What is the new price? ";
+      std::cin >> price;
+
+      if (price <= 0) {
+        std::cout << "Invalid Amount!\n";
+      }
+      items[i].price = price;
+      std::cout << "Price updated successfully!\n";
+    }
+    if (i == size - 1)
+      std::cout << "Invalid ID!\n";
+  }
 }
