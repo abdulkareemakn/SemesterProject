@@ -82,7 +82,7 @@ int main(void)
 
     if (authentication())
     {
-        // createInventory();
+        createInventory();
         readInventory(items, SIZE);
 
         while (true)
@@ -323,13 +323,7 @@ void sellItem(Item items[], int size)
     float bill;
     float change;
 
-    std::cout << std::left << std::setw(10) << "Name\t\t|  ID\t\t|  Price\n\n";
-
-    for (int i = 0; i < size; i++)
-    {
-        std::cout << std::left << std::setw(10) << items[i].name << "\t|  " << items[i].ID << "\t|  $" << items[i].price
-                  << "\n";
-    }
+    displayInventory(items, size);
 
     std::cout << "\nWhich item would you like to sell? \n";
     std::cout << "Item ID: ";
